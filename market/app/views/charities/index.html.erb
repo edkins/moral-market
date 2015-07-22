@@ -1,0 +1,23 @@
+<h1>Charities</h1>
+
+<%= link_to 'New', new_charity_path %>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+  <% @charities.each do |charity| %>
+    <tr>
+      <td><%= charity.name %></td>
+      <td><%= link_to 'Show', charity_path(charity) %></td>
+      <td><%= link_to 'Edit', edit_charity_path(charity) %></td>
+      <td><%= link_to 'Delete', charity_path(charity),
+          method: :delete,
+          data: { confirm: 'Are you sure?' } %></td>
+    </tr>
+  <% end %>
+</table>
