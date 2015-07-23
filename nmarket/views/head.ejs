@@ -8,7 +8,7 @@
   <body>
     <p>
     <% if (!user) { %>
-      <a href="/login">Login</a>
+      <% include login_button %>
     <% } else { %>
       <a href="/logout">Logout</a>
     <% } %>

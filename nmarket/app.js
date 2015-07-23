@@ -36,17 +36,13 @@ app.use(require('express-session')({secret:'98439ax9d.acdf439arda.p9daa'}));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/login', function(req,res) {
-  res.render('login', {user: req.user});
-});
-
 app.get('/logout', function(req,res) {
   req.logout();
   res.redirect('/');
 });
 
 app.post('/auth/browserid',
-  passport.authenticate('browserid', { failureRedirect: '/login' }),
+  passport.authenticate('browserid', { failureRedirect: '/' }),
   function(req, res) {
     res.redirect('/');
   }
@@ -61,6 +57,6 @@ var server = app.listen(3000);
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('/login');
+  res.redirect('/');
 }
 
