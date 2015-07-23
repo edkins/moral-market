@@ -18,7 +18,7 @@ passport.use(new BrowserIDStrategy({
   audience: 'http://localhost:3000'
   },
   function(email, done) {
-    database.user.find_by_email(email, done);
+    database.user.find_or_create_by_email(email, done);
   }
 ));
 
@@ -46,16 +46,28 @@ app.post('/auth/browserid',
   }
 );
 
-app.get('/', function(req,res) {
-  res.render('index', {user: req.user});
-});
-
 app.get('/login_failed', function(req,res) {
   res.render('login_failed', {user: req.user});
 });
 
 app.get('/login_required', function(req,res) {
   res.render('login_required', {user: req.user});
+});
+
+app.get('/', function(req,res) {
+  res.render('index', {user: req.user});
+});
+
+app.get('/users', ensureAdmin, function(req,res) {
+  database.user.all(function(err,users) {
+    res.render('users', {user: req.user, users: users});
+  });
+});
+
+app.get('/charities', function(req,res) {
+  database.charity.all(function(err,charities) {
+    res.render('charities', {user: req.user, charities: charities});
+  });
 });
 
 var server = app.listen(3000);
@@ -65,3 +77,11 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login_required');
 }
 
+function ensureAdmin(req, res, next) {
+  if (req.isAuthenticated()) {
+    if (req.user.admin) {
+      return next();
+    }
+  }
+  res.redirect('/login_required');
+}

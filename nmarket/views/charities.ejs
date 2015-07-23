@@ -1,0 +1,17 @@
+<% include head %>
+<h2>Charities</h2>
+<table>
+  <tr>
+    <th>Handle</th>
+    <th>Name</th>
+  </tr>
+  <% for (var i = 0; i < charities.length; i++) {
+    var charity = charities[i] %>
+    <tr>
+      <td><%= charity.handle %></td>
+      <td><%= charity.name %></td>
+    </tr>
+  <% } %>
+</table>
+
+<% include foot %>
