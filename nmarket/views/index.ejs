@@ -2,6 +2,6 @@
 <% if (!user) { %>
   <h2>Welcome! Please log in.</h2>
 <% } else { %>
-  <h2>Hello, <%= user.email %>.</h2>
+  <h2>Hello, <%= user.email %>. Rowid=<%= user.rowid %>, admin=<%= user.admin %>, points=<%= user.points %>.</h2>
 <% } %>
 <% include foot %>
