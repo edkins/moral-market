@@ -72,7 +72,7 @@ app.get('/charities', ensureAuthenticated, function(req,res) {
 
 app.get('/request_donation/:id', ensureAuthenticated, function(req,res) {
   database.charity.find_by_rowid(req.params.id, function(err, charity) {
-    if (charity == null) {
+    if (err || charity == null) {
       res.render('bad', {user: req.user});
     } else {
       res.render('request_donation', {user: req.user, charity: charity});
@@ -80,10 +80,21 @@ app.get('/request_donation/:id', ensureAuthenticated, function(req,res) {
   });
 });
 
+app.post('/rating', ensureAuthenticated, function(req,res) {
+  database.rating.set(req.user.rowid, req.body.charity, req.body.rating, function(err) {
+    if (err)
+      res.sendStatus(500);
+    else
+      res.sendStatus(200);   // ok but no content to return
+  });
+});
+
 var server = app.listen(3000);
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
+//  req.user = {rowid:0, email:'edkins@gmail.com'};
+//  return next();
   res.redirect('/login_required');
 }
 

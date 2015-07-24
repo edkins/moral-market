@@ -47,3 +47,12 @@ exports.charity = {
     db.get('SELECT * FROM charity WHERE rowid=?', rowid, done);
   }
 };
+
+exports.rating = {
+  set: function(userid, charityid, points_per_money, done) {
+    db.run('DELETE FROM utility_rating WHERE user=? AND charity=?', userid, charityid, function(err) {
+      if (err) { done(err, null); }
+      db.run('INSERT INTO utility_rating (user, charity, utility_per_money) VALUES (?, ?, ?)', userid, charityid, points_per_money, done);
+    });
+  }
+};

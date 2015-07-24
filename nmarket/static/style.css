@@ -7,6 +7,14 @@
 }
 
 .quantity {
+  border-top: #cec 1px solid;
+  border-left: #cec 1px solid;
+  border-bottom: #787 1px solid;
+  border-right: #787 1px solid;
+  background: #afa;
+}
+
+.quantity.sending {
   border-top: #ecc 1px solid;
   border-left: #ecc 1px solid;
   border-bottom: #877 1px solid;

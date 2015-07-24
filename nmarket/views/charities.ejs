@@ -14,9 +14,20 @@
     var target = e.explicitOriginalTarget;
     var x = e.offsetX;
     var y = e.offsetY;
+    x = x / 200 * 100;
     if (x < 0) x = 0;
-    if (x > 200) x = 200;
-    $('#rating' + id).css('width', x);
+    if (x > 100) x = 100;
+    $('#rating' + id).css('width',x + '%').addClass('sending');
+    $.post('/rating',
+      {
+        charity: id,
+        rating: x
+      },
+      function(data, status)
+      {
+        $('#rating' + id).removeClass('sending');
+      }
+    );
   }
 </script>
 <h2>Charities</h2>
