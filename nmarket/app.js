@@ -1,3 +1,5 @@
+var secure = false;    // For testing, having to log in each time is a pain
+
 var express = require('express');
 var passport = require('passport');
 var BrowserIDStrategy = require('passport-browserid').Strategy;
@@ -93,9 +95,18 @@ var server = app.listen(3000);
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-//  req.user = {rowid:0, email:'edkins@gmail.com'};
-//  return next();
-  res.redirect('/login_required');
+  if (secure) {
+    res.redirect('/login_required');
+  } else {
+    database.user.find_by_rowid(1, function(err, user) {
+      if (err) {
+        res.sendStatus(500);
+      } else {
+        req.user = user;
+        next();
+      }
+    });
+  }
 }
 
 function ensureAdmin(req, res, next) {
