@@ -1,15 +1,48 @@
 <% include head %>
+<%
+  function to_number(n)
+  {
+    if (n == null)
+      return 0;
+    else
+      return n;
+  }
+%>
+<script language="javascript">
+  function rating_click(id,e)
+  {
+    var target = e.explicitOriginalTarget;
+    var x = e.offsetX;
+    var y = e.offsetY;
+    if (x < 0) x = 0;
+    if (x > 200) x = 200;
+    $('#rating' + id).css('width', x);
+  }
+</script>
 <h2>Charities</h2>
 <table>
   <tr>
     <th>Handle</th>
     <th>Name</th>
+    <th colspan="2">Donations</th>
+    <th>Price</th>
+    <th>Your rating</th>
   </tr>
   <% for (var i = 0; i < charities.length; i++) {
-    var charity = charities[i] %>
+    var charity = charities[i];
+    var id = charity.rowid %>
     <tr>
       <td><%= charity.handle %></td>
       <td><%= charity.name %></td>
+      <td><a href="/offer_donation/<%= charity.rowid %>">Donate</a></td>
+      <td><a href="/request_donation/<%= charity.rowid %>">Promote</a></td>
+      <td><%= to_number(charity.price) %></td>
+      <td>
+        <div class="quantity_holder" style="width:200px;height:20px" onmousedown="rating_click(<%= id %>,event)">
+          <div class="quantity" id="rating<%= id %>" style="width:<%= to_number(charity.utility_per_money) %>%;height:18px">
+          </div>
+        </div>
+      </td>
     </tr>
   <% } %>
 </table>

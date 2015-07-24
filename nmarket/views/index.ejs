@@ -3,5 +3,9 @@
   <h2>Welcome! Please log in.</h2>
 <% } else { %>
   <h2>Hello, <%= user.email %>. Rowid=<%= user.rowid %>, admin=<%= user.admin %>, points=<%= user.points %>.</h2>
+  <% if (user.admin) { %>
+    <p><a href="/users">List users</a></p>
+  <% } %>
+  <p><a href="/charities">List charities</a></p>
 <% } %>
 <% include foot %>

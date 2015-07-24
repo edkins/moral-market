@@ -5,12 +5,10 @@ var render = require('connect-render');
 var database = require('./database.js');
 
 passport.serializeUser(function(user, done) {
-  console.log('serializeUser: ' + user.rowid + "," + user.email);
   done(null, user.rowid);
 });
 
 passport.deserializeUser(function(rowid, done) {
-  console.log('deserializeUser: ' + rowid);
   database.user.find_by_rowid(rowid, done);
 });
 
@@ -33,6 +31,8 @@ app.use(require('method-override')());
 app.use(require('express-session')({secret:'98439ax9d.acdf439arda.p9daa'}));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use('/static', express.static(__dirname + '/static'));
 
 app.get('/logout', function(req,res) {
   req.logout();
@@ -64,9 +64,19 @@ app.get('/users', ensureAdmin, function(req,res) {
   });
 });
 
-app.get('/charities', function(req,res) {
-  database.charity.all(function(err,charities) {
+app.get('/charities', ensureAuthenticated, function(req,res) {
+  database.charity.all_by_user(req.user.rowid, function(err,charities) {
     res.render('charities', {user: req.user, charities: charities});
+  });
+});
+
+app.get('/request_donation/:id', ensureAuthenticated, function(req,res) {
+  database.charity.find_by_rowid(req.params.id, function(err, charity) {
+    if (charity == null) {
+      res.render('bad', {user: req.user});
+    } else {
+      res.render('request_donation', {user: req.user, charity: charity});
+    }
   });
 });
 

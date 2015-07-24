@@ -1,0 +1,9 @@
+<% include head %>
+<h2>Request donation to <i><%= charity.name %></i></h2>
+<p>You have <%= user.points %> points.</p>
+<form action="/offer_donation" method="post">
+  Number of points on offer: <input type="text"><br>
+  Points per USD: <input type="text"><br>
+  <button type="submit">Submit</button>
+</form>
+<% include foot %>
