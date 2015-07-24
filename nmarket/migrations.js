@@ -48,4 +48,12 @@ db.serialize(function() {
 //db.run("INSERT INTO charity VALUES ('IPA', 'Innovations for Poverty Action')");
 //db.run("INSERT INTO charity VALUES ('FHF', 'The Fred Hollows Foundation')");
 //db.run("INSERT INTO charity VALUES ('FF', 'Fistula Foundation')");
+//db.run("UPDATE charity SET name='Open Philanthropy Project' WHERE handle='OPP'");
+//db.run("INSERT INTO charity VALUES ('AE', 'Animal Equality')");
+//db.run("INSERT INTO charity VALUES ('MFA', 'Mercy for Animals')");
+//db.run("INSERT INTO charity VALUES ('THL', 'The Humane League')");
+//db.run("INSERT INTO charity VALUES ('ASF', 'Albert Schweitzer Foundation')");
+//db.run("INSERT INTO charity VALUES ('FARM', 'Farm Animal Rights Movement')");
+//db.run("INSERT INTO charity VALUES ('VO', 'Vegan Outreach')");
+//db.run("INSERT INTO charity VALUES ('HSUS', 'The Humane Society of the United States')");
 });
