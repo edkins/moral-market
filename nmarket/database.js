@@ -20,6 +20,9 @@ exports.user = {
   },
   all: function(done) {
     db.all("SELECT rowid,* FROM user", done);
+  },
+  set_points_per_utility: function(rowid, points_per_utility, done) {
+    db.get("UPDATE user SET points_per_utility=? WHERE rowid=?", points_per_utility, rowid, done);
   }
 };
 
@@ -43,6 +46,7 @@ exports.charity = {
   all_by_user: function(userid, done) {
     //db.all('SELECT charity.rowid, charity.*, max(request_donation.points_per_money), utility_rating.utility_per_money FROM charity LEFT JOIN request_donation ON charity.rowid=request_donation.charity LEFT JOIN utility_rating ON charity.rowid=utility_rating.charity AND utility_rating.user=? GROUP BY charity.rowid', userid, done);
     db.all('SELECT charity.rowid, charity.*, utility_rating.utility_per_money FROM charity LEFT JOIN utility_rating ON charity.rowid=utility_rating.charity AND utility_rating.user=?', userid, done);
+    //db.all('SELECT charity.rowid, charity.*, utility_rating.utility_per_money FROM charity LEFT JOIN utility_rating ON charity.rowid=utility_rating.charity AND utility_rating.user=?', userid, done);
   },
   find_by_rowid: function(rowid, done) {
     db.get('SELECT * FROM charity WHERE rowid=?', rowid, done);

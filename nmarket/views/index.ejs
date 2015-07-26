@@ -1,8 +1,24 @@
 <% include head %>
+<%
+  function to_number(n)
+  {
+    if (n == null)
+      return 0;
+    else
+      return n;
+  }
+%>
 <% if (!user) { %>
   <h2>Welcome! Please log in.</h2>
 <% } else { %>
-  <h2>Hello, <%= user.email %>. Rowid=<%= user.rowid %>, admin=<%= user.admin %>, points=<%= user.points %>.</h2>
+  <h2>Hello, <%= user.email %>.</h2>
+  <p>
+    You have <%= user.points %> points.
+  </p>
+  <form action="/points_per_utility" method="post">
+    You would spend <input name="points_per_utility" type="text" value="<%= to_number(user.points_per_utility) %>"> points to gain 1 unit of utility.
+    <button type="submit">Submit</button>
+  </form>
   <% if (user.admin) { %>
     <p><a href="/users">List users</a></p>
   <% } %>

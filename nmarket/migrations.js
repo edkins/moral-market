@@ -56,4 +56,6 @@ db.serialize(function() {
 //db.run("INSERT INTO charity VALUES ('FARM', 'Farm Animal Rights Movement')");
 //db.run("INSERT INTO charity VALUES ('VO', 'Vegan Outreach')");
 //db.run("INSERT INTO charity VALUES ('HSUS', 'The Humane Society of the United States')");
+//db.run("DROP TABLE offer_donation");
+//db.run("ALTER TABLE user ADD COLUMN points_per_utility REAL");
 });

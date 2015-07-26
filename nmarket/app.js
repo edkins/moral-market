@@ -56,7 +56,7 @@ app.get('/login_required', function(req,res) {
   res.render('login_required', {user: req.user});
 });
 
-app.get('/', function(req,res) {
+app.get('/', testWithoutLogin, function(req,res) {
   res.render('index', {user: req.user});
 });
 
@@ -66,7 +66,7 @@ app.get('/users', ensureAdmin, function(req,res) {
   });
 });
 
-app.get('/charities', ensureAuthenticated, function(req,res) {
+app.get('/charities', testWithoutLogin, ensureAuthenticated, function(req,res) {
   database.charity.all_by_user(req.user.rowid, function(err,charities) {
     res.render('charities', {user: req.user, charities: charities});
   });
@@ -82,7 +82,18 @@ app.get('/request_donation/:id', ensureAuthenticated, function(req,res) {
   });
 });
 
-app.post('/rating', ensureAuthenticated, function(req,res) {
+app.post('/points_per_utility', testWithoutLogin, ensureAuthenticated, function(req, res) {
+  database.user.set_points_per_utility(req.user.rowid, req.body.points_per_utility, function(err) {
+    if (err)
+      res.sendStatus(500);
+    else
+      res.redirect('/');
+  });
+});
+
+/* Ajaxy methods */
+
+app.post('/rating', testWithoutLogin, ensureAuthenticated, function(req,res) {
   database.rating.set(req.user.rowid, req.body.charity, req.body.rating, function(err) {
     if (err)
       res.sendStatus(500);
@@ -93,11 +104,8 @@ app.post('/rating', ensureAuthenticated, function(req,res) {
 
 var server = app.listen(3000);
 
-function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  if (secure) {
-    res.redirect('/login_required');
-  } else {
+function testWithoutLogin(req, res, next) {
+  if (!secure && !req.isAuthenticated()) {
     database.user.find_by_rowid(1, function(err, user) {
       if (err) {
         res.sendStatus(500);
@@ -107,6 +115,11 @@ function ensureAuthenticated(req, res, next) {
       }
     });
   }
+}
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+  res.redirect('/login_required');
 }
 
 function ensureAdmin(req, res, next) {
