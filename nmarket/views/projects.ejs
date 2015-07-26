@@ -1,0 +1,29 @@
+<% include head %>
+<h2>Projects</h2>
+<form action="/add_project" method="post">
+  URL: <input name="url" type="text">
+  <button type="submit">Add project</button>
+</form>
+<ul>
+<%
+  var prev_project_id = null;
+  for (var i = 0; i < projects.length; i++) {
+  var project = projects[i];
+  %>
+    <% if (project.rowid != prev_project_id) { %>
+      </ul>
+      <a href="<%= project.url %>"><%= project.url %></a>
+      <ul>
+        <li>
+          <form action="/add_contributor/<%= project.rowid %>" method="post">
+            <input name="email" type="text">
+            <button type="submit">Add contributor</button>
+          </form>
+        </li>
+    <% } %>
+  <% if (project.contributor_id != null) { %>
+        <li><%= project.contributor_id %> -- <%= project.contributor_email %>
+  <% } %>
+<% } %>
+</ul>
+<% include foot %>

@@ -58,4 +58,9 @@ db.serialize(function() {
 //db.run("INSERT INTO charity VALUES ('HSUS', 'The Humane Society of the United States')");
 //db.run("DROP TABLE offer_donation");
 //db.run("ALTER TABLE user ADD COLUMN points_per_utility REAL");
+//db.run("CREATE TABLE project (url VARCHAR UNIQUE)");
+//db.run("CREATE TABLE contribution (user INT, project INT, UNIQUE (user, project))");
+//db.run("CREATE TABLE ownership (user INT, contribution INT, quantity INT)");
+db.run("CREATE TABLE transactio (reason VARCHAR)");
+//db.run("CREATE TABLE transfer (transactio INT, contribution INT, user_from INT, user_to INT, quantity INT)");
 });

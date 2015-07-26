@@ -15,6 +15,9 @@ exports.user = {
       }
     });
   },
+  find_by_email: function(email, done) {
+    db.get("SELECT rowid,* FROM user WHERE email=?", email, done);
+  },
   find_by_rowid: function(rowid, done) {
     db.get("SELECT rowid,* FROM user WHERE rowid=?", rowid, done);
   },
@@ -63,5 +66,38 @@ exports.rating = {
         db.run('INSERT INTO utility_rating (user, charity, utility_per_money) VALUES (?, ?, ?)', userid, charityid, utility_per_money, done);
       }
     });
+  }
+};
+
+exports.project = {
+  all: function(done) {
+    db.all('SELECT project.rowid, project.url, contribution.user AS contributor_id, user.email AS contributor_email FROM project LEFT JOIN contribution ON project.rowid=contribution.project LEFT JOIN user ON user.rowid=contribution.user', done);
+  },
+  add: function(url,done) {
+    db.run('INSERT INTO project VALUES (?)', url, done);
+  }
+};
+
+exports.contribution = {
+  add_email: function(email, projectid, done) {
+    exports.user.find_by_email(email, function(err, user) {
+      if (err) { return done(err, null); }
+      if (user == null) { return done('User not found:' + email, null); }
+      userid = user.rowid;
+      db.run('INSERT INTO contribution VALUES(?, ?)', userid, projectid, function(err) {
+        if (err) { return done(err, null); }
+        db.run('SELECT rowid FROM contribution WHERE user=?, project=?', userid, projectid, function(err, row) {
+          if (err) { return done(err, null); }
+          var contribid = row.rowid;
+          db.run('INSERT INTO ownership VALUES (?, ?, 1000000000)', userid, contribid, done);
+        });
+      });
+    });
+  }
+};
+
+exports.transaction = {
+  transact: function(transfers, reason, done) {
+    done('error', null);
   }
 };

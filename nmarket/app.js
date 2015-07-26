@@ -72,6 +72,34 @@ app.get('/charities', testWithoutLogin, ensureAuthenticated, function(req,res) {
   });
 });
 
+app.get('/projects', testWithoutLogin, ensureAuthenticated, function(req,res) {
+  database.project.all(function(err,projects) {
+    if (err)
+      res.render('bad', {user: req.user, error:err});
+    else
+      res.render('projects', {user: req.user, projects: projects});
+  });
+});
+
+
+app.post('/add_project', testWithoutLogin, ensureAuthenticated, function(req,res) {
+  database.project.add(req.body.url, function(err) {
+    if (err)
+      res.render('bad', {user: req.user, error:err});
+    else
+      res.redirect('/projects');
+  });
+});
+
+app.post('/add_contributor/:projectid', testWithoutLogin, ensureAuthenticated, function(req,res) {
+  database.contribution.add_email(req.body.email, req.params.projectid, function(err) {
+    if (err)
+      res.render('bad', {user: req.user, error:err});
+    else
+      res.redirect('/projects');
+  });
+});
+
 app.get('/request_donation/:id', ensureAuthenticated, function(req,res) {
   database.charity.find_by_rowid(req.params.id, function(err, charity) {
     if (err || charity == null) {
