@@ -73,10 +73,13 @@ exports.rating = {
 
 exports.project = {
   all: function(done) {
-    db.all('SELECT project.rowid, project.url, contribution.user AS contributor, ownership.user AS owner, ownership.quantity AS quantity, ownership.rowid AS ownershipid FROM project LEFT JOIN contribution ON project.rowid=contribution.project LEFT JOIN ownership ON ownership.contribution=contribution.rowid', done);
+    db.all('SELECT rowid, * FROM project', done);
+  },
+  find_by_rowid: function(rowid,done) {
+    db.get('SELECT rowid, * FROM project WHERE rowid=?', rowid, done);
   },
   add: function(url,done) {
-    db.run('INSERT INTO project VALUES (?)', url, done);
+    db.run('INSERT INTO project VALUES (?, 0)', url, done);
   }
 };
 

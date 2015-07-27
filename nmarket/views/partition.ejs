@@ -1,0 +1,29 @@
+<% include head %>
+<h2>Partition project</h2>
+<form action="/partition/<%=project.rowid%>" method="post">
+<p>
+  Project: <a href="<%=project.url%>"><%=project.url%></a>
+</p>
+<h3>Contributors</h3>
+<p>
+<% for (var i = 0; i < 5; i++) {
+  console.log(i);
+  user_picker_name = 'contributor' + i; user_picker_rowid = 'null' %>
+  <input name="contributor_percentage<%=i%>" type="text" size="3">% from
+  <% include user_picker %>
+  <br>
+<% } %>
+</p>
+<h3>Influences</h3>
+<p>
+<% for (var i = 0; i < 5; i++) {
+  console.log(i);
+  project_picker_name = 'influence' + i; project_picker_rowid = 'null' %>
+  <input name="influence_percentage<%=i%>" type="text" size="3">% from
+  <% include project_picker %>
+  <br>
+<% } %>
+</p>
+<input type="submit" value="Request partition">
+</form>
+<% include foot %>

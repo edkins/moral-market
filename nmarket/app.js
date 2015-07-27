@@ -5,6 +5,7 @@ var passport = require('passport');
 var BrowserIDStrategy = require('passport-browserid').Strategy;
 var render = require('connect-render');
 var database = require('./database.js');
+var transactions = require('./transactions.js');
 
 passport.serializeUser(function(user, done) {
   done(null, user.rowid);
@@ -82,6 +83,43 @@ app.get('/projects', testWithoutLogin, ensureAuthenticated, function(req,res) {
         res.render('projects', {user: req.user, projects: projects, users: users});
     });
   });
+});
+
+app.get('/partition/:projectid', testWithoutLogin, ensureAuthenticated, function(req,res) {
+  database.user.all(function(err,users) {
+    if (err || users == null) { throw 'Was expecting some users'; }
+    database.project.all(function(err,projects) {
+      if (err) { throw 'Error getting projects'; }
+      database.project.find_by_rowid(req.params.projectid, function(err,project) {
+        if (err || project == null || project.partitioned)
+          res.render('bad', {user: req.user, error:err});
+        else
+          res.render('partition', {user: req.user, projects:projects, users:users, project:project});
+      });
+    });
+  });
+});
+
+app.post('/partition/:projectid', testWithoutLogin, ensureAuthenticated, function(req,res) {
+  transactions.partition([
+      req.body.contributor1, req.body.contributor_percentage1,
+      req.body.contributor2, req.body.contributor_percentage2,
+      req.body.contributor3, req.body.contributor_percentage3,
+      req.body.contributor4, req.body.contributor_percentage4,
+      req.body.contributor5, req.body.contributor_percentage5
+      ],[
+      req.body.influence1, req.body.influence_percentage1,
+      req.body.influence2, req.body.influence_percentage2,
+      req.body.influence3, req.body.influence_percentage3,
+      req.body.influence4, req.body.influence_percentage4,
+      req.body.influence5, req.body.influence_percentage5
+      ], function(err) {
+        if (err)
+          res.render('bad', {user: req.user, error:err});
+        else
+          res.redirect('/projects');
+      }
+    );
 });
 
 app.get('/buy/:ownershipid', testWithoutLogin, ensureAuthenticated, function(req,res) {

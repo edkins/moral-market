@@ -1,6 +1,6 @@
 <select id="<%= user_picker_name %>" name="<%= user_picker_name %>" autocomplete="off">
   <option value="null"></option>
-  <% for (i = 0; i < users.length; i++) {
+  <% for (var i = 0; i < users.length; i++) {
   %>
     <option value="<%= users[i].rowid %>" <%= (users[i].rowid==user_picker_rowid) ? "selected" : "" %> >
       <%= users[i].email %>

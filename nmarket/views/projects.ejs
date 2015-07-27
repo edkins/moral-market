@@ -14,38 +14,12 @@ function find_user(u, userid) {
   URL: <input name="url" type="text">
   <button type="submit">Add project</button>
 </form>
-<ul>
-<%
-  var prev_project_id = null;
-  for (var i = 0; i < projects.length; i++) {
+<% for (var i = 0; i < projects.length; i++) {
   var project = projects[i];
   %>
-    <% if (project.rowid != prev_project_id) { %>
-      </ul>
-      <a href="<%= project.url %>"><%= project.url %></a>
-      <ul>
-        <li>
-          <form action="/add_contributor/<%= project.rowid %>" method="post">
-            <input name="email" type="text">
-            <button type="submit">Add contributor</button>
-          </form>
-        </li>
-    <% } %>
-  <% if (project.contributor != null) { %>
-        <li>
-          <%= project.contributor %> --
-          <%= find_user(users, project.contributor).email %> |
-          <%= project.quantity / 10000000 %>%
-          owned by <%= find_user(users, project.owner).email %> |
-          <% if (project.owner == user.rowid) { %>
-            <a href="/sell/<%= project.ownershipid%>">Sell</a>
-          <% } else { %>
-            <a href="/buy/<%= project.ownershipid%>">Buy</a>
-          <% } %>
-        </li>
-  <% }
-  prev_project_id = project.rowid;
-  %>
+    <a href="<%= project.url %>"><%= project.url %></a>
+    <% if (!project.partitioned) { %>
+      | <a href="/partition/<%= project.rowid %>">Partition</a>
+    <% } %><br>
 <% } %>
-</ul>
 <% include foot %>

@@ -1,0 +1,9 @@
+<select id="<%= project_picker_name %>" name="<%= project_picker_name %>" autocomplete="off">
+  <option value="null"></option>
+  <% for (var i = 0; i < projects.length; i++) {
+  %>
+    <option value="<%= projects[i].rowid %>" <%= (projects[i].rowid==project_picker_rowid) ? "selected" : "" %> >
+      <%= projects[i].url %>
+    </option>
+  <% } %>
+</select>
