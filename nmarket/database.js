@@ -6,8 +6,10 @@ var db = new sqlite3.Database('db');
 exports.user = {
   find_or_create_by_email: function(email, done) {
     db.get("SELECT rowid,* FROM user WHERE email=?", email, function(err,user){
+      if (err) { return done(err, null); }
       if (user == null) {
-        db.run("INSERT INTO user VALUES (?, 0, 0)", email, function(err,dummy){
+        db.run("INSERT INTO user VALUES (?, 0, 0, 0)", email, function(err,dummy){
+          if (err) { return done(err, null); }
           db.get("SELECT rowid,* FROM user WHERE email=?", done);
         });
       } else {
@@ -71,7 +73,7 @@ exports.rating = {
 
 exports.project = {
   all: function(done) {
-    db.all('SELECT project.rowid, project.url, contribution.user AS contributor_id, user.email AS contributor_email FROM project LEFT JOIN contribution ON project.rowid=contribution.project LEFT JOIN user ON user.rowid=contribution.user', done);
+    db.all('SELECT project.rowid, project.url, contribution.user AS contributor, ownership.user AS owner, ownership.quantity AS quantity, ownership.rowid AS ownershipid FROM project LEFT JOIN contribution ON project.rowid=contribution.project LEFT JOIN ownership ON ownership.contribution=contribution.rowid', done);
   },
   add: function(url,done) {
     db.run('INSERT INTO project VALUES (?)', url, done);
@@ -86,13 +88,20 @@ exports.contribution = {
       userid = user.rowid;
       db.run('INSERT INTO contribution VALUES(?, ?)', userid, projectid, function(err) {
         if (err) { return done(err, null); }
-        db.run('SELECT rowid FROM contribution WHERE user=?, project=?', userid, projectid, function(err, row) {
+        db.get('SELECT rowid FROM contribution WHERE user=? AND project=?', userid, projectid, function(err, row) {
           if (err) { return done(err, null); }
+          if (row == null) { return done('Something weird happened: SELECT rowid FROM contribution returned null', null); }
           var contribid = row.rowid;
           db.run('INSERT INTO ownership VALUES (?, ?, 1000000000)', userid, contribid, done);
         });
       });
     });
+  }
+};
+
+exports.ownership = {
+  find_by_rowid: function(rowid, done) {
+    db.get('SELECT ownership.rowid, ownership.user, ownership.quantity, contribution.user AS contributor, project.url FROM ownership INNER JOIN contribution ON ownership.contribution=contribution.rowid INNER JOIN project ON contribution.project=project.rowid WHERE ownership.rowid=?', rowid, done);
   }
 };
 

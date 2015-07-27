@@ -1,0 +1,80 @@
+<% include head %>
+<h2>Transaction</h2>
+
+<ul id="transfer_list">
+</ul>
+<input id="new_percentage" type="text" value="<%= quantity / 10000000 %>" autocomplete="off" size=3>% of
+<% user_picker_name="new_contributor"; user_picker_rowid=contributor; %>
+<% include user_picker %>
+original contribution towards <input id="new_url" type="text" value="<%= url %>" autocomplete="off">
+<ul>
+  <li>
+    from
+    <% user_picker_name="new_from"; user_picker_rowid=user_from; %>
+    <% include user_picker %>
+  </li>
+  <li>
+    to
+    <% user_picker_name="new_to"; user_picker_rowid=user_to; %>
+    <% include user_picker %>
+  </li>
+</ul>
+<button id="new_transfer" type="button">OK</button>
+
+<script>
+  var transfers = [];
+  var users = <%- JSON.stringify(users) %>;
+
+  function find_user(userid) {
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].rowid == userid)
+        return users[i];
+    }
+    return null;
+  }
+
+  function repopulate_transfer_list()
+  {
+    $('#transfer_list').empty();
+    for (var i = 0; i < transfers.length; i++)
+    {
+      $('#transfer_list').append('<li>'
+        + transfers[i].percentage
+        + '% of '
+        + find_user(transfers[i].contributor).email
+        + ' original contribution towards '
+        + transfers[i].url
+        + ' from '
+        + find_user(transfers[i].user_from).email
+        + ' to '
+        + find_user(transfers[i].user_to).email
+        + '</li>\n');
+    }
+  }
+
+  $('#new_transfer').click(function ()
+  {
+    transfers.push({
+      percentage: $('#new_percentage').val(),
+      contributor: $('#new_contributor').val(),
+      url: $('#new_url').val(),
+      user_from: $('#new_from').val(),
+      user_to: $('#new_to').val()
+    });
+    repopulate_transfer_list();
+    $('#new_percentage').val('');
+    $('#new_contributor').val(null);
+    $('#new_url').val('');
+    $('#new_from').val(null);
+    $('#new_to').val(null);
+  });
+</script>
+<p>Other information, payment etc.</p>
+<p>
+  <textarea id="extra"></textarea>
+</p>
+<p>
+  <button type="button">Finalize and sign</button>
+</p>
+
+<% include foot %>

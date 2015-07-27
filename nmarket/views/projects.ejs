@@ -1,4 +1,14 @@
 <% include head %>
+<%
+// TODO: why can't we see the variable "users" from here?
+function find_user(u, userid) {
+  for (var i = 0; i < u.length; i++) {
+    if (u[i].rowid == userid)
+      return u[i];
+  }
+  return null;
+}
+%>
 <h2>Projects</h2>
 <form action="/add_project" method="post">
   URL: <input name="url" type="text">
@@ -21,9 +31,21 @@
           </form>
         </li>
     <% } %>
-  <% if (project.contributor_id != null) { %>
-        <li><%= project.contributor_id %> -- <%= project.contributor_email %>
-  <% } %>
+  <% if (project.contributor != null) { %>
+        <li>
+          <%= project.contributor %> --
+          <%= find_user(users, project.contributor).email %> |
+          <%= project.quantity / 10000000 %>%
+          owned by <%= find_user(users, project.owner).email %> |
+          <% if (project.owner == user.rowid) { %>
+            <a href="/sell/<%= project.ownershipid%>">Sell</a>
+          <% } else { %>
+            <a href="/buy/<%= project.ownershipid%>">Buy</a>
+          <% } %>
+        </li>
+  <% }
+  prev_project_id = project.rowid;
+  %>
 <% } %>
 </ul>
 <% include foot %>

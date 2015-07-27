@@ -61,6 +61,8 @@ db.serialize(function() {
 //db.run("CREATE TABLE project (url VARCHAR UNIQUE)");
 //db.run("CREATE TABLE contribution (user INT, project INT, UNIQUE (user, project))");
 //db.run("CREATE TABLE ownership (user INT, contribution INT, quantity INT)");
-db.run("CREATE TABLE transactio (reason VARCHAR)");
+//db.run("CREATE TABLE transactio (reason VARCHAR)");
 //db.run("CREATE TABLE transfer (transactio INT, contribution INT, user_from INT, user_to INT, quantity INT)");
+db.run("ALTER TABLE transactio ADD COLUMN signed BOOL");
+db.run("CREATE TABLE signature (user INT, transactio INT)");
 });

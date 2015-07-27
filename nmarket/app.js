@@ -73,14 +73,42 @@ app.get('/charities', testWithoutLogin, ensureAuthenticated, function(req,res) {
 });
 
 app.get('/projects', testWithoutLogin, ensureAuthenticated, function(req,res) {
-  database.project.all(function(err,projects) {
-    if (err)
-      res.render('bad', {user: req.user, error:err});
-    else
-      res.render('projects', {user: req.user, projects: projects});
+  database.user.all(function(err,users) {
+    if (err || users == null) { throw 'Was expecting some users'; }
+    database.project.all(function(err,projects) {
+      if (err)
+        res.render('bad', {user: req.user, error:err});
+      else
+        res.render('projects', {user: req.user, projects: projects, users: users});
+    });
   });
 });
 
+app.get('/buy/:ownershipid', testWithoutLogin, ensureAuthenticated, function(req,res) {
+  database.user.all(function(err,users) {
+    if (err || users == null) { throw 'Was expecting some users'; }
+    database.ownership.find_by_rowid(req.params.ownershipid, function(err, ownership) {
+      if (err || ownership == null) {
+        res.render('bad', {user: req.user, error:err});
+      } else {
+        res.render('transaction', {user: req.user, users:users, quantity:ownership.quantity, url:ownership.url, contributor:ownership.contributor, user_from:ownership.user, user_to:req.user.rowid, transfers:[]});
+      }
+    });
+  });
+});
+
+app.get('/sell/:ownershipid', testWithoutLogin, ensureAuthenticated, function(req,res) {
+  database.user.all(function(err,users) {
+    if (err || users == null) { throw 'Was expecting some users'; }
+    database.ownership.find_by_rowid(req.params.ownershipid, function(err, ownership) {
+      if (err || ownership == null) {
+        res.render('bad', {user: req.user, error:err});
+      } else {
+        res.render('transaction', {user: req.user, users:users, quantity:ownership.quantity, url:ownership.url, contributor:ownership.contributor, user_from:ownership.user, user_to:null, transfers:[]});
+      }
+    });
+  });
+});
 
 app.post('/add_project', testWithoutLogin, ensureAuthenticated, function(req,res) {
   database.project.add(req.body.url, function(err) {
@@ -99,6 +127,10 @@ app.post('/add_contributor/:projectid', testWithoutLogin, ensureAuthenticated, f
       res.redirect('/projects');
   });
 });
+
+/*app.post('/buy/:ownershipid', testWithoutLogin, ensureAuthenticated, function(req,res) {
+  database.
+});*/
 
 app.get('/request_donation/:id', ensureAuthenticated, function(req,res) {
   database.charity.find_by_rowid(req.params.id, function(err, charity) {
@@ -142,6 +174,8 @@ function testWithoutLogin(req, res, next) {
         next();
       }
     });
+  } else {
+    next();
   }
 }
 
